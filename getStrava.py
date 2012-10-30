@@ -3,16 +3,18 @@ import urllib2, urllib, sys, getpass, json
 STRAVA_URL_V1 = 'http://www.strava.com/api/v1/'
 STRAVA_URL_V2 = 'https://www.strava.com/api/v2/'
 
-def fetchData(email, pw):
-    # First we need the strava athlete id
-    args = {
-        'email': email,
-        'password': pw,
-        }
-    f = urllib2.urlopen(STRAVA_URL_V2 + 'authentication/login',
-                        urllib.urlencode(args))
-    id = json.loads(f.read())['athlete']['id']
-    print 'Got id ' + str(id) + ' for user ' + sys.argv[1]
+def fetchData(email=None, pw=None, id=None):
+
+    if id == None:
+        args = {
+            'email': email,
+            'password': pw,
+            }
+        f = urllib2.urlopen(STRAVA_URL_V2 + 'authentication/login',
+                            urllib.urlencode(args))
+        id = json.loads(f.read())['athlete']['id']
+        print 'Got id ' + str(id) + ' for user ' + email
+
     # now we can get the users rides
     f = urllib2.urlopen(STRAVA_URL_V1 + 'rides?athleteId=' + str(id))
     rides = json.loads(f.read())['rides']
@@ -41,9 +43,12 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == 'fetch':
         if len(sys.argv) < 3:
-            print 'usage: ' + sys.argv[0] + ' fetch email'
+            print 'usage: ' + sys.argv[0] + ' fetch <email|uid>'
             sys.exit(1)
-        fetchData(sys.argv[2], getpass.getpass())
+        if '@' in sys.argv[2]:
+            fetchData(email=sys.argv[2], pw=getpass.getpass())
+        else:
+            fetchData(id=sys.argv[2])
     else:
         print 'Error: unknown command ' + cmd
         sys.exit(1)
