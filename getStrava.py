@@ -28,6 +28,9 @@ def fetchData(email=None, pw=None, id=None):
         for e in efforts:
             print '\t' + e['segment']['name']
             try:
+                # TODO: This only gets the first 50 efforts.  To get all of the
+                # efforts, we'll have to use start and end dates (e.g.,
+                # ?startDate=2012-10-29&endDate=2012-10-30)
                 f = urllib2.urlopen(STRAVA_URL_V1 + 'segments/' + str(e['segment']['id']) + '/efforts')
                 all_efforts = json.loads(f.read())['efforts']
             except urllib2.HTTPError as err:
