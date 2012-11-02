@@ -5,6 +5,21 @@ STRAVA_URL_V1 = 'http://www.strava.com/api/v1/'
 STRAVA_URL_V2 = 'https://www.strava.com/api/v2/'
 DBFILE = 'strava.db'
 
+def add_athlete(c, a):
+    c.execute("insert or replace into athletes values (?, ?, ?)",
+              (a['id'], a['name'], a['username']))
+
+def add_effort(c, e):
+    c.execute("insert or replace into efforts values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+              (e['id'], e['athlete']['id'], e['segment']['id'], e['ride']['id'],
+               e['startDate'], e['elapsedTime'], e['movingTime'], e['distance'],
+               e['averageSpeed'], e['maximumSpeed'], e['elevationGain']))
+
+def add_segment(c, s):
+    c.execute("insert or replace into segments values (?, ?, ?, ?, ?, ?)",
+              (s['id'], s['name'], s['distance'], s['elevationGain'],
+               s['averageGrade'], s['climbCategory']))
+
 def fetchData(email=None, pw=None, id=None):
 
     if id == None:
@@ -36,6 +51,7 @@ def fetchData(email=None, pw=None, id=None):
                    rr['elevationGain'], rr['location'], rr['name']))
         f = urllib2.urlopen(STRAVA_URL_V1 + 'rides/' + str(r['id']) + '/efforts')
         efforts = json.loads(f.read())['efforts']
+
         for e in efforts:
             print '\t' + e['segment']['name']
             f = urllib2.urlopen(STRAVA_URL_V1 + 'efforts/' + str(e['id']))
@@ -45,16 +61,11 @@ def fetchData(email=None, pw=None, id=None):
                 c.execute("insert or replace into athletes values (?, ?, ?)",
                           (a['id'], a['name'], a['username']))
                 added_self = True
-            c.execute("insert or replace into efforts values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                      (e['id'], ee['athlete']['id'], e['segment']['id'], r['id'], ee['startDate'],
-                       ee['elapsedTime'], ee['movingTime'], ee['distance'],
-                       ee['averageSpeed'], ee['maximumSpeed'], ee['elevationGain']))
-
+            ee['id'] = e['id']
+            add_effort(c, ee)
             f = urllib2.urlopen(STRAVA_URL_V1 + 'segments/' + str(e['segment']['id']))
             s = json.loads(f.read())['segment']
-            c.execute("insert or replace into segments values (?, ?, ?, ?, ?, ?)",
-                      (s['id'], s['name'], s['distance'], s['elevationGain'],
-                       s['averageGrade'], s['climbCategory']))
+            add_segment(c, s)
 
             try:
                 # TODO: This only gets the first 50 efforts.  To get all of the
@@ -67,13 +78,8 @@ def fetchData(email=None, pw=None, id=None):
                     f = urllib2.urlopen(STRAVA_URL_V1 + 'efforts/' + str(ee['id']))
                     eee = json.loads(f.read())['effort']
                     a = eee['athlete']
-                    c.execute("insert or replace into efforts values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                              (ee['id'], ee['athlete']['id'], e['segment']['id'], r['id'], eee['startDate'],
-                               eee['elapsedTime'], eee['movingTime'], eee['distance'],
-                               eee['averageSpeed'], eee['maximumSpeed'], eee['elevationGain']))
-                    c.execute("insert or replace into athletes values (?, ?, ?)",
-                              (a['id'], a['name'], a['username']))
-
+                    add_effort(c, eee)
+                    add_athlete(c, a)
             except urllib2.HTTPError as err:
                 print '\t\t' + 'WARNING: Failed to find efforts for segment ' + str(e['segment']['name'])
                 print '\t\t' + str(err)
