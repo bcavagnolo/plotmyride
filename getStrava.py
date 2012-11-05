@@ -1,5 +1,6 @@
 import urllib2, urllib, sys, getpass, json
 import sqlite3
+import datetime, time
 
 STRAVA_URL_V1 = 'http://www.strava.com/api/v1/'
 STRAVA_URL_V2 = 'https://www.strava.com/api/v2/'
@@ -19,6 +20,35 @@ def add_segment(c, s):
     c.execute("insert or replace into segments values (?, ?, ?, ?, ?, ?)",
               (s['id'], s['name'], s['distance'], s['elevationGain'],
                s['averageGrade'], s['climbCategory']))
+
+def get_segment_efforts(id, start=0, end=0):
+    # Thanks to
+    # http://marc.durdin.net/2011/11/working-around-limitations-in-stravas.html
+    # for this approach.
+    if start == 0 and end == 0:
+        start = int(time.mktime(datetime.datetime.strptime("01/01/2010", "%d/%m/%Y").timetuple()))
+        end = int(time.mktime(datetime.datetime.today().timetuple()))
+
+    if start >= end:
+        return []
+
+    startString = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d')
+    endString = datetime.datetime.fromtimestamp(end).strftime('%Y-%m-%d')
+
+    f = urllib2.urlopen(STRAVA_URL_V1 + 'segments/' + str(id) + '/efforts' +
+                        '?startDate=' + startString + '&endDate=' + endString)
+    all_efforts = json.loads(f.read())['efforts']
+    numEfforts = len(all_efforts)
+    if numEfforts == 50:
+        mid = round((start + end)/2)
+        firstEfforts = get_segment_efforts(id, start, mid)
+        secondEfforts = get_segment_efforts(id, mid, end)
+        if not firstEfforts:
+            return secondEfforts
+        if not secondEfforts:
+            return firstEfforts
+        return firstEfforts + secondEfforts
+    return all_efforts
 
 def fetchData(email=None, pw=None, id=None):
 
@@ -68,12 +98,8 @@ def fetchData(email=None, pw=None, id=None):
             add_segment(c, s)
 
             try:
-                # TODO: This only gets the first 50 efforts.  To get all of the
-                # efforts, we'll have to use start and end dates (e.g.,
-                # ?startDate=2012-10-29&endDate=2012-10-30)
-                f = urllib2.urlopen(STRAVA_URL_V1 + 'segments/' + str(e['segment']['id']) + '/efforts')
-                all_efforts = json.loads(f.read())['efforts']
-
+                all_efforts = get_segment_efforts(e['segment']['id'])
+                print "\t\tfetching " + str(len(all_efforts)) + " efforts"
                 for ee in all_efforts:
                     f = urllib2.urlopen(STRAVA_URL_V1 + 'efforts/' + str(ee['id']))
                     eee = json.loads(f.read())['effort']
