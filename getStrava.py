@@ -21,34 +21,15 @@ def add_segment(c, s):
               (s['id'], s['name'], s['distance'], s['elevationGain'],
                s['averageGrade'], s['climbCategory']))
 
-def get_segment_efforts(id, start=0, end=0):
-    # Thanks to
-    # http://marc.durdin.net/2011/11/working-around-limitations-in-stravas.html
-    # for this approach.
-    if start == 0 and end == 0:
-        start = int(time.mktime(datetime.datetime.strptime("01/01/2010", "%d/%m/%Y").timetuple()))
-        end = int(time.mktime(datetime.datetime.today().timetuple()))
-
-    if start >= end:
-        return []
-
-    startString = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d')
-    endString = datetime.datetime.fromtimestamp(end).strftime('%Y-%m-%d')
-
+def get_segment_efforts(id, offset=0):
     f = urllib2.urlopen(STRAVA_URL_V1 + 'segments/' + str(id) + '/efforts' +
-                        '?startDate=' + startString + '&endDate=' + endString)
+                        '?offset=' + str(offset))
     all_efforts = json.loads(f.read())['efforts']
     numEfforts = len(all_efforts)
-    if numEfforts == 50:
-        mid = round((start + end)/2)
-        firstEfforts = get_segment_efforts(id, start, mid)
-        secondEfforts = get_segment_efforts(id, mid, end)
-        if not firstEfforts:
-            return secondEfforts
-        if not secondEfforts:
-            return firstEfforts
-        return firstEfforts + secondEfforts
-    return all_efforts
+    if numEfforts < 50:
+        return all_efforts
+    else:
+        return all_efforts + get_segment_efforts(id, offset + 50)
 
 def fetchData(email=None, pw=None, id=None):
 
