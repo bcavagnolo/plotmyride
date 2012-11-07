@@ -31,7 +31,7 @@ def get_segment_efforts(id, offset=0):
     else:
         return all_efforts + get_segment_efforts(id, offset + 50)
 
-def fetchData(email=None, pw=None, id=None):
+def _fetchData(conn, email=None, pw=None, id=None):
 
     if id == None:
         args = {
@@ -49,7 +49,6 @@ def fetchData(email=None, pw=None, id=None):
 
     # and now we need all the efforts for this athlete
     efforts = []
-    conn = sqlite3.connect(DBFILE)
     c = conn.cursor()
     added_self = False
     for r in rides:
@@ -82,6 +81,9 @@ def fetchData(email=None, pw=None, id=None):
                 all_efforts = get_segment_efforts(e['segment']['id'])
                 print "\t\tfetching " + str(len(all_efforts)) + " efforts"
                 for ee in all_efforts:
+                    cursor = c.execute('SELECT id FROM efforts WHERE id=?', (ee['id'],))
+                    if cursor.fetchone():
+                        continue
                     f = urllib2.urlopen(STRAVA_URL_V1 + 'efforts/' + str(ee['id']))
                     eee = json.loads(f.read())['effort']
                     a = eee['athlete']
@@ -91,7 +93,12 @@ def fetchData(email=None, pw=None, id=None):
                 print '\t\t' + 'WARNING: Failed to find efforts for segment ' + str(e['segment']['name'])
                 print '\t\t' + str(err)
 
-    conn.commit()
+def fetchData(email=None, pw=None, id=None):
+    conn = sqlite3.connect(DBFILE)
+    try:
+        _fetchData(conn, email, pw, id)
+    finally:
+        conn.commit()
 
 if __name__ == "__main__":
 
