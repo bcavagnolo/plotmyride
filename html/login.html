@@ -3,7 +3,14 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="../css/main.css" />
-		<style type="text/css"></style>
+		<script src="../plots/jquery.min.js"></script>
+		<script>
+			$(function () {
+				$("#login").submit(function (e) {
+					$('#pw').val("");
+				});
+			});
+		</script>
 	</head>
 	<body>
 		<div class = "bar" id = "background">
@@ -14,7 +21,7 @@
 				Yo muthafuckas. Cycling is about to get real. Use Plot My Ride to see how you match up against all those other Strava muthafuckas.
 			</div>
 			<div id = "login-wrapper" class = "logintext">
-				<form action = "main.html" method = "post">
+				<form action = "main.html" id = "login">
 					<ul>
 						<li>
 							<label for = "username">Strava Username:</label>
@@ -22,7 +29,7 @@
 						</li>
 						<li>
 							<label for = "password">Password:</label>
-							<input type = "password" name = "password"/>
+							<input type = "password" name = "password" id = "pw"/>
 						</li>
 						<li>
 							<input type = "submit" value = "Log-in"
