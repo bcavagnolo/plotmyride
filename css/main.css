@@ -137,13 +137,11 @@ width:250px;
 	height:500px;
 }
 
-#content{
+#box{
 	height:600px;
 	width:1000px;
 	float:left;
 	margin:10px;
-	background-color:#CFCFCF;
-
 }
 
 label {
