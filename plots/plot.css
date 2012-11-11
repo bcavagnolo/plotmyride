@@ -1,59 +1,58 @@
-body {
-   margin: 0px;
-}
-.h,.v {
-   stroke: black;
-   stroke-dasharray: 4 4;
-   stroke-width: 1;
-   stroke-opacity: .5;
-}
-.axis path, .axis line {
-   fill: none;
-   stroke: black;
-   shape-rendering: crispEdges;
-}
-
-.dot {
-   stroke-width: 1.5px;
-   stroke: black;
-   opacity: 0.1;
-   fill: none;
-}
-.dot:hover {
-   opacity: 1;
-}
-
-.axis text {
-   font-family: sans-serif;
-   font-size: 11px;
-}
-
 .progress-meter .background {
   fill: #ccc;
 }
-
 .progress-meter .foreground {
   fill: #000;
 }
-
 .progress-meter text {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 24px;
   font-weight: bold;
 }
 
+.axis path, .axis line {
+   fill: none;
+   stroke: purple;
+   shape-rendering: crispEdges;
+}
+.axis text {
+   font-family: sans-serif;
+   font-size: 10px;
+   fill: purple;
+}
+
+.dot {
+   stroke-width: 1.5px;
+   stroke: purple;
+   opacity: 0.1;
+   fill: none;
+}
+.userDot {
+   stroke-width: 1.5px;
+   stroke: orange;
+   opacity: 0.8;
+   fill: orange;
+}
+
 .box {
    font: 10px sans-serif;
+   opacity: 0.7;
+}
+.box text {
+   fill: black;
+   font-weight: bold;
+   opacity: 1;
 }
 .box line, .box rect, .box circle {
-   stroke: #000;
+   stroke: purple;
    stroke-width: 1.5px;
-   fill: #fff;
+   fill: purple;
 }
 .box .center {
    stroke-dasharray: 3 3;
 }
 .box .outlier {
-   stroke: #ccc;
+   stroke: purple;
    fill: none;
+   opacity: 0.1;
 }

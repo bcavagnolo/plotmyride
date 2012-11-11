@@ -3,8 +3,7 @@ var pageWidth = 960, pageHeight = 500;
 // variables for scatter plots
 var margin = {top: 20, right: 20, bottom: 30, left: 60},
     width = pageWidth - margin.left - margin.right,
-    height = pageHeight - margin.top - margin.bottom,
-    formatTooltip = d3.format(".2");
+    height = pageHeight - margin.top - margin.bottom;
 
 // variables for progress meter
 var innerR = 150,
@@ -16,7 +15,7 @@ var progress = 0,
 
 // variables for box plots
 var boxMargin = {top: 10, right: 50, bottom: 20, left: 50},
-    boxWidth = 120 - boxMargin.left - boxMargin.right,
+    boxWidth = width / 9 / 2,
     boxHeight = 500 - boxMargin.top - boxMargin.bottom;
 var chart = boxChart()
       .whiskers(iqr(1.5))
@@ -30,14 +29,18 @@ var svg = d3.select("body").append("svg")
       .append("g")
          .attr("class", "whole")
          .attr("transform", "translate(" + pageWidth / 2 + "," + pageHeight / 2 + ")");
-//  .on("mousemove", function() {
-//   console.log(event);
-//  });
+
 d3.select("svg")
   .on("mousemove", function() {
-     var zone_num = Math.round(event.pageX / (880/9)) - 1;
+     var zone_num = (event.pageX-margin.left) / (880/9/2);
+     if (zone_num < 0) zone_num = -1;
+     else if (zone_num >= 18) zone_num = 18;
+     else zone_num = Math.floor(zone_num);
      $("g.box").css("visibility", "hidden");
      $(".num"+zone_num).css("visibility", "visible");
+  })
+  .on("mouseout", function(){
+     $("g.box").css("visibility", "hidden");
   });
 
 // draw progress meter
@@ -75,26 +78,13 @@ d3.csv("strava.csv", function(data) {
       
       // TODO: should automatically calculate
       var g = d.grade;
-      if (g > -8 && g <= -6) {
-         d.cat = 0;
-      } else if (g > -6 && g <= -4) {
-         d.cat = 1;
-      } else if (g > -4 && g <= -2) {
-         d.cat = 2;
-      } else if (g > -2 && g <= 0) {
-         d.cat = 3;
-      } else if (g > 0 && g <= 2) {
-         d.cat = 4;
-      } else if (g > 2 && g <= 4) {
-         d.cat = 5;
-      } else if (g > 4 && g <= 6) {
-         d.cat = 6;
-      } else if (g > 6 && g <= 8) {
-         d.cat = 7;
-      } else if (g > 8 && g <= 10) {
-         d.cat = 8;
+      var start_grade = -8, end_grade = 10, diff = 1;
+      for (i = 0; i < (end_grade-start_grade)/diff; i++) {
+         if (g > i+start_grade && g <= i+start_grade+diff) {
+            d.cat = i;
+            break;
+         }
       }
-
       var data = box_data[d.cat];
       if (!data) {
          data = box_data[d.cat] = [d.speed];
@@ -152,19 +142,29 @@ d3.csv("strava.csv", function(data) {
       .attr("cy", function(d) { return y(d.speed); })
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
-        $(this).attr("style", "fill: green");
-        $("rect.box", ".num" + d.cat).attr("style", "fill: orange");
      })
 	  .on("mousemove", function(){
 	     tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX+15)+"px");
 	  })
 	  .on("mouseout", function(d){
-	     $(this).attr("style", "fill: none");
 	     tooltip.style("visibility", "hidden");
-	     $("rect.box", ".num" + d.cat).attr("style", "fill: #fff");
 	  });
 
-    // draw user dots and bind events for tooltip
+   // draw box plots
+   var vis = svg.selectAll("svg")
+      .data(box_data)
+      .enter().append("g")
+         .attr("transform", function(d, i) {
+            var left = i * (880/9/2);
+            return "translate(" + left + ",0)"
+         })
+         .attr("class", function (d, i) { return "box num" + i;})
+         .attr("width", (880/9/2))
+         .attr("height", height)
+      .call(chart);
+   $("g.box").css("visibility", "hidden");
+
+   // draw user dots and bind events for tooltip
    svg.selectAll(".userDot")
      .data(user_data)
      .enter().append("circle")
@@ -175,32 +175,17 @@ d3.csv("strava.csv", function(data) {
       .style("fill", "orange")
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
-        $(this).attr("style", "fill: red");
-        $("rect.box", ".num"+d.cat).attr("style", "fill: orange");
      })
 	  .on("mousemove", function(){
 	     tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX+15)+"px");
 	  })
 	  .on("mouseout", function(d){
 	     tooltip.style("visibility", "hidden");
-	     $(this).attr("style", "fill: orange");
-	     $("rect.box", ".num"+d.cat).attr("style", "fill: #fff");
 	  });
 
-   // draw box plots
-   var vis = svg.selectAll("svg")
-      .data(box_data)
-      .enter().append("g")
-         .attr("transform", function(d, i) {
-            var left = 40+ i * (880/9);
-            return "translate(" + left + ",0)"
-         })
-         .attr("class", function (d, i) { return "box num" + i;})
-         .attr("width", (880/9))
-         .attr("height", height)
-      .call(chart);
 
-   $("g.box").css("visibility", "hidden");
+
+
    // finish drawing, remove progress meter and scale back the plots
    $(".progress-meter").remove();
    $(".whole").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
