@@ -1,0 +1,59 @@
+body {
+   margin: 0px;
+}
+.h,.v {
+   stroke: black;
+   stroke-dasharray: 4 4;
+   stroke-width: 1;
+   stroke-opacity: .5;
+}
+.axis path, .axis line {
+   fill: none;
+   stroke: black;
+   shape-rendering: crispEdges;
+}
+
+.dot {
+   stroke-width: 1.5px;
+   stroke: black;
+   opacity: 0.5;
+   fill: none;
+}
+.dot:hover {
+   opacity: 1;
+}
+
+.axis text {
+   font-family: sans-serif;
+   font-size: 11px;
+}
+
+.progress-meter .background {
+  fill: #ccc;
+}
+
+.progress-meter .foreground {
+  fill: #000;
+}
+
+.progress-meter text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.box {
+   font: 10px sans-serif;
+}
+.box line, .box rect, .box circle {
+   stroke: #000;
+   stroke-width: 1.5px;
+   fill: #fff;
+}
+.box .center {
+   stroke-dasharray: 3 3;
+}
+.box .outlier {
+   stroke: #ccc;
+   fill: none;
+}
