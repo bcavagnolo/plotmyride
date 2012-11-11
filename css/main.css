@@ -21,6 +21,8 @@
 	border-width:7px;
 	border-color:black;
 	border-radius:35px;
+	font-family:Dolphins;
+	font-size:1.3em;
 }
 
 @font-face {  
@@ -50,10 +52,9 @@ width:250px;
 
 
 #login-wrapper{
-	width:900px;
-	margin-top:155px;
+	width:400px;
+	margin: auto;
 	clear:both;
-	margin-left:100px;
 }
 
 
@@ -82,9 +83,10 @@ width:250px;
 }
 
 #button_login{
-	margin-left:30px;
 	width:160px;
-	float:left;
+    display: block;
+    line-height: 22px;
+    margin: 5px auto;
 }
 
 #login-button-text{
@@ -142,4 +144,20 @@ width:250px;
 	margin:10px;
 	background-color:#CFCFCF;
 
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+    text-align: right;
+}
+
+li {
+    list-style: none;
+    padding: 5px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
 }

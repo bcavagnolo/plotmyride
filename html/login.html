@@ -13,18 +13,24 @@
 			<div class = "logintext" id = "explain">
 				Yo muthafuckas. Cycling is about to get real. Use Plot My Ride to see how you match up against all those other Strava muthafuckas.
 			</div>
-			<div id = "login-wrapper">
-				<div class = "logintext" id = "username">
-					Strava Username:
-					<input type="text" name="username"/>
-				</div>
-				<div class = "logintext" id = "password">
-					Password:
-					<input type="text" name="password"/>
-				</div>
-				<a><div class = button id = "button_login">
-					<img id = "login-button-text" src = "../images/login_button.png"/>
-				</div></a>
+			<div id = "login-wrapper" class = "logintext">
+				<form action = "main.html" method = "post">
+					<ul>
+						<li>
+							<label for = "username">Strava Username:</label>
+							<input type = "text" name = "username"/>
+						</li>
+						<li>
+							<label for = "password">Password:</label>
+							<input type = "password" name = "password"/>
+						</li>
+						<li>
+							<input type = "submit" value = "Log-in"
+								   class = "button" id = "button_login"
+								   alt = "submit"/>
+						</li>
+					</ul>
+				</form>
 			</div>
 		</div>
 	</body>
