@@ -1,0 +1,145 @@
+/*CSS for PlotmyRide
+*/
+
+* {
+    margin: 0;
+}
+
+.bar{
+	background-color:#864ec6;
+	margin:10px;
+	border-radius:50px;
+	border-style:outset;
+	border-width:4px;
+	border-color:black;
+}
+
+.button{
+	background-color:#e4e542;
+	height:44px;
+	border-style:double;
+	border-width:7px;
+	border-color:black;
+	border-radius:35px;
+}
+
+@font-face {  
+  font-family: Dolphins ;  
+  src: url( ../images//Dolphins.ttf ) format("truetype");  
+}  
+
+#background{
+	margin-left:auto;
+	margin-right:auto;
+	width:900px;
+	height:600px;
+}
+
+#logo-wrapper{
+	width:900px;
+	height:275px;
+}
+
+#logo-login{
+float:left;
+margin-left:320px;
+margin-top:30px;
+height:250px;
+width:250px;
+}
+
+
+#login-wrapper{
+	width:900px;
+	margin-top:155px;
+	clear:both;
+	margin-left:100px;
+}
+
+
+.logintext{
+	font-family:Dolphins;
+	font-size:1.3em;
+}
+
+#explain{
+	margin-left:190px;
+	margin-top:40px;
+	width:520px;
+	float:left;
+}
+
+
+#username{
+	margin-top:15px;
+	float:left;
+}
+
+#password{
+	margin-top:15px;
+	float:left;
+	margin-left:20px;
+}
+
+#button_login{
+	margin-left:30px;
+	width:160px;
+	float:left;
+}
+
+#login-button-text{
+	margin-left:25px;
+	margin-right:auto;
+	width:105px;
+}
+
+#button_ex{
+	width:160px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#button_text{
+	margin-left:auto;
+	margin-right:auto;
+	width:130px;
+}
+
+#topbar{
+	height:175px;
+	width:1250px;
+}
+
+#logo{
+	height:160px;
+	width:160px;
+	margin-left:24px;
+	margin-top:9px;
+}
+
+#bottomwrapper{
+	height:600px;
+	width:1250px;
+}
+#sidebar{
+	text-align:center;
+	float:left;
+	width:200px;
+	height:600px;
+}
+
+#sidebar-panel{
+	text-align:center;
+	margin-top:60px;
+	width:200px;
+	height:500px;
+}
+
+#content{
+	height:600px;
+	width:1000px;
+	float:left;
+	margin:10px;
+	background-color:#CFCFCF;
+
+}
