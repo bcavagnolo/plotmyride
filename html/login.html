@@ -4,13 +4,8 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href="../css/main.css" />
 		<script src="../plots/jquery.min.js"></script>
-		<script>
-			$(function () {
-				$("#login").submit(function (e) {
-					$('#pw').val("");
-				});
-			});
-		</script>
+		<script src="../plots/d3.v2.min.js"></script>
+		<script src="../plots/login.js"></script>
 	</head>
 	<body>
 		<div class = "bar" id = "background">
@@ -23,9 +18,10 @@
 			<div id = "login-wrapper" class = "logintext">
 				<form action = "main.html" id = "login">
 					<ul>
+						<li><p id = "message">&nbsp;</p></li>
 						<li>
 							<label for = "username">Strava Username:</label>
-							<input type = "text" name = "username"/>
+							<input type = "text" name = "username" id = "uname"/>
 						</li>
 						<li>
 							<label for = "password">Password:</label>
