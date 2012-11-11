@@ -33,6 +33,12 @@ var svg = d3.select("body").append("svg")
 //  .on("mousemove", function() {
 //   console.log(event);
 //  });
+d3.select("svg")
+  .on("mousemove", function() {
+     var zone_num = Math.round(event.pageX / (880/9)) - 1;
+     $("g.box").css("visibility", "hidden");
+     $(".num"+zone_num).css("visibility", "visible");
+  });
 
 // draw progress meter
 var arc = d3.svg.arc()
@@ -182,16 +188,19 @@ d3.csv("strava.csv", function(data) {
 	  });
 
    // draw box plots
-   var vis = d3.select("#box").selectAll("svg")
+   var vis = svg.selectAll("svg")
       .data(box_data)
-      .enter().append("svg")
+      .enter().append("g")
+         .attr("transform", function(d, i) {
+            var left = 40+ i * (880/9);
+            return "translate(" + left + ",0)"
+         })
          .attr("class", function (d, i) { return "box num" + i;})
-         .attr("width", boxWidth + boxMargin.left + boxMargin.right)
-         .attr("height", boxHeight + boxMargin.bottom + boxMargin.top)
-      .append("g")
-         .attr("transform", "translate(" + boxMargin.left + "," + boxMargin.top + ")")
+         .attr("width", (880/9))
+         .attr("height", height)
       .call(chart);
 
+   $("g.box").css("visibility", "hidden");
    // finish drawing, remove progress meter and scale back the plots
    $(".progress-meter").remove();
    $(".whole").attr("transform", "translate(" + margin.left + "," + margin.top + ")");

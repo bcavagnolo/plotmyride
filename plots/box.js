@@ -49,12 +49,12 @@ function boxChart() {
 
       // Compute the new x-scale.
       var x1 = d3.scale.linear()
-          .domain(domain && domain.call(this, d, i) || [min, max])
-          .range([height, 0]);
+          .domain([0, 70000])
+          .range([450, 0]);
 
       // Retrieve the old x-scale, if this is an update.
       var x0 = this.__chart__ || d3.scale.linear()
-          .domain([0, Infinity])
+          .domain([0, 70000])
           .range(x1.range());
 
       // Stash the new scale.
@@ -171,7 +171,7 @@ function boxChart() {
 
       outlier.enter().insert("svg:circle", "text")
           .attr("class", "outlier")
-          .attr("r", 5)
+          .attr("r", 3)
           .attr("cx", width / 2)
           .attr("cy", function(i) { return x0(d[i]); })
           .style("opacity", 1e-6)
