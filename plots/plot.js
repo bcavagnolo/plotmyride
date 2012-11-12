@@ -23,7 +23,7 @@ var chart = boxChart()
       .height(boxHeight);
 
 // set the whole chart
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#box").append("svg")
          .attr("width", width + margin.left + margin.right)
          .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -71,10 +71,11 @@ var tooltip = d3.select("body")
 d3.csv("strava.csv", function(data) {
    var user_data = [];
    var box_data = [];
+   var username = getURLParameter('username');
    // parse the CSV string to float and select user dots
    data.forEach(function(d) {
       d.grade = parseFloat(d.grade);
-      d.speed = parseFloat(d.speed);
+      d.speed = parseFloat(d.speed)*0.000621371;
       
       // TODO: should automatically calculate
       var g = d.grade;
@@ -92,8 +93,7 @@ d3.csv("strava.csv", function(data) {
          data.push(d.speed);
       }
 
-      // TODO: get the athlete_id
-      if (d.athlete_id == "228156") {
+      if (d.username == username) {
          user_data.push(d);
       }
    });
@@ -182,9 +182,6 @@ d3.csv("strava.csv", function(data) {
 	  .on("mouseout", function(d){
 	     tooltip.style("visibility", "hidden");
 	  });
-
-
-
 
    // finish drawing, remove progress meter and scale back the plots
    $(".progress-meter").remove();

@@ -49,12 +49,12 @@ function boxChart() {
 
       // Compute the new x-scale.
       var x1 = d3.scale.linear()
-          .domain([0, 70000])
+          .domain([0, 70000*0.000621371])
           .range([450, 0]);
 
       // Retrieve the old x-scale, if this is an update.
       var x0 = this.__chart__ || d3.scale.linear()
-          .domain([0, 70000])
+          .domain([0, 70000*0.000621371])
           .range(x1.range());
 
       // Stash the new scale.
