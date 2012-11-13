@@ -144,6 +144,13 @@ d3.csv("strava.csv", function(data) {
       .attr("r", 3)
       .attr("cx", function(d) { return x(d.grade); })
       .attr("cy", function(d) { return y(d.speed); })
+      .attr("timemin",function(d){
+        var time = d.startDate.split("T")[1].split(":");
+        h = parseInt(time[0]);
+        m = parseInt(time[1]);
+        timemin = h*60 + m
+        return timemin;
+      })
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
         $(this).attr("style", "fill: green");
@@ -158,6 +165,8 @@ d3.csv("strava.csv", function(data) {
 	     $("rect.box", ".num" + d.cat).attr("style", "fill: #fff");
 	  });
 
+  
+
     // draw user dots and bind events for tooltip
    svg.selectAll(".userDot")
      .data(user_data)
@@ -166,6 +175,13 @@ d3.csv("strava.csv", function(data) {
       .attr("r", 3)
       .attr("cx", function(d) { return x(d.grade); })
       .attr("cy", function(d) { return y(d.speed); })
+      .attr("timemin",function(d){
+        var time = d.startDate.split("T")[1].split(":");
+        h = parseInt(time[0]);
+        m = parseInt(time[1]);
+        timemin = h*60 + m
+        return timemin;
+      })
       .style("fill", "orange")
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
@@ -180,6 +196,31 @@ d3.csv("strava.csv", function(data) {
 	     $(this).attr("style", "fill: orange");
 	     $("rect.box", ".num"+d.cat).attr("style", "fill: #fff");
 	  });
+    
+    //Create slider functionality
+    
+    $('body').append("<div id='slider'></div>");
+     $(function(){
+      $('#slider').slider({
+        orientation: "horizontal",
+        max: 1440,
+        min: 0,
+        range: true,
+        values: [40, 1400],        
+        slide: function(event, ui) {
+           lbound = ui.values[0];
+           ubound = ui.values[1];
+           $('.dot , .userDot').each(function(){
+            if($(this).attr("timemin")>lbound && $(this).attr("timemin")<ubound) {
+              $(this).attr("visibility","visible");
+              }
+            else{
+              $(this).attr("visibility","hidden");
+            } 
+          });
+        }
+      });
+    });
 
    // draw box plots
    var vis = d3.select("#box").selectAll("svg")
