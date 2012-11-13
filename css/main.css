@@ -21,11 +21,13 @@
 	border-width:7px;
 	border-color:black;
 	border-radius:35px;
+	font-family:Dolphins;
+	font-size:1.3em;
 }
 
 @font-face {  
   font-family: Dolphins ;  
-  src: url( ../images//Dolphins.ttf ) format("truetype");  
+  src: url( ../images/dolphins.ttf ) format("truetype");  
 }  
 
 #background{
@@ -50,10 +52,9 @@ width:250px;
 
 
 #login-wrapper{
-	width:900px;
-	margin-top:155px;
+	width:400px;
+	margin: auto;
 	clear:both;
-	margin-left:100px;
 }
 
 
@@ -82,9 +83,10 @@ width:250px;
 }
 
 #button_login{
-	margin-left:30px;
 	width:160px;
-	float:left;
+    display: block;
+    line-height: 22px;
+    margin: 5px auto;
 }
 
 #login-button-text{
@@ -113,8 +115,6 @@ width:250px;
 #logo{
 	height:160px;
 	width:160px;
-	margin-left:24px;
-	margin-top:9px;
 }
 
 #bottomwrapper{
@@ -122,10 +122,17 @@ width:250px;
 	width:1250px;
 }
 #sidebar{
+    padding-top: 20px;
 	text-align:center;
 	float:left;
 	width:200px;
 	height:600px;
+    padding-top: 20px;
+    font-family: sans-serif;
+}
+
+#sidebar a {
+    color: #e4e542;
 }
 
 #sidebar-panel{
@@ -135,11 +142,31 @@ width:250px;
 	height:500px;
 }
 
-#content{
+#box{
 	height:600px;
 	width:1000px;
 	float:left;
 	margin:10px;
-	background-color:#CFCFCF;
+    padding-top: 20px;
+}
 
+label {
+    display: inline-block;
+    width: 200px;
+    text-align: right;
+}
+
+li {
+    list-style: none;
+    padding: 5px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+#message {
+    font-family: sans-serif;
+    color: #f00;
 }

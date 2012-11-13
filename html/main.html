@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="../css/main.css" />
-		<style type="text/css"></style>
+		<link href="../plots/plot.css" rel="stylesheet">
 	</head>
 	<body>
-		<div class = "bar" id = "topbar">
-			<img id = "logo" src="../images/logo_1.png"/>
-		</div>
+		<script src="../plots/jquery.min.js"></script>
+		<script src="../plots/d3.v2.min.js"></script>
+		<script src="../plots/box.js"></script>
 		<div id = "bottomwrapper">
 			<div class = "bar" id = "sidebar">
-				<div id = "sidebar-panel">
-					<div class="button" id ="button_ex">
-						<img id="button_text" src="../images/button_ex.png"/>
-					</div>
-				</div>
+				<img id = "logo" src="../images/Logo_1.png"/>
+				<ul>
+					<li id = 'username' >&nbsp</li>
+					<li><a href="login.html">logout</a></li>
+				</ul>
 			</div>
-			<div id = "content">
-				Viz goes here
+			<div id = "box">
 			</div>
 		</div>
+		<script src="../plots/main.js"></script>
+		<script src="../plots/plot.js"></script>
 	</body>
 </html>
