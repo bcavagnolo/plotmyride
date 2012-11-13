@@ -198,11 +198,9 @@ d3.csv("strava.csv", function(data) {
 	  });
     
     //Create slider functionality
-    
-    $('body').append("<div id='slider'></div>");
      $(function(){
       $('#slider').slider({
-        orientation: "horizontal",
+        orientation: "vertical",
         max: 1440,
         min: 0,
         range: true,

@@ -170,3 +170,44 @@ ul {
     font-family: sans-serif;
     color: #f00;
 }
+
+.axislabel{
+	font-family:Dolphins;
+	font-size: 13.5px;
+	margin-bottom: 30px;
+}
+
+#axisleft{
+	float:left;
+	height:300px;
+	width:50px;
+	border-left:1px;
+	border-color:black;
+
+}
+
+#axisright{
+	float:left;
+	height:300px;
+	width:50px;
+}
+
+#hod{
+	width:100px;
+	height:30px;
+	font-family:Dolphins;
+	margin-top:10px;
+	margin-bottom:5px;
+}
+#sliderbox{
+	float:left;
+	width:200px;
+	height:300px;
+}
+
+#slider{
+	float:left;
+	margin-left: 40px;
+	height:200px; ;
+}
+

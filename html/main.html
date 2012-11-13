@@ -8,6 +8,8 @@
 		<script src="../plots/jquery.min.js"></script>
 		<script src="../plots/d3.v2.min.js"></script>
 		<script src="../plots/box.js"></script>
+   		<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+   		<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />		
 		<div id = "bottomwrapper">
 			<div class = "bar" id = "sidebar">
 				<img id = "logo" src="../images/Logo_1.png"/>
@@ -15,6 +17,18 @@
 					<li id = 'username' >&nbsp</li>
 					<li><a href="login.html">logout</a></li>
 				</ul>
+				<div id = 'sliderbox'>
+					<div id ="hod">Hour of Day</div>
+					<div id = 'slider'></div>
+					<div id = 'axisleft'>
+						<div class = 'axislabel'>-12am</div>
+						<div class = 'axislabel'>-6pm</div>
+						<div class = 'axislabel'>-12pm</div>
+						<div class = 'axislabel'>-6am</div>
+						<div class = 'axislabel'>-12am</div>
+					</div>
+					<div id = 'axisright'></div>
+				</div>	
 			</div>
 			<div id = "box">
 			</div>
