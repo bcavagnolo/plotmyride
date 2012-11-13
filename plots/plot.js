@@ -32,7 +32,7 @@ var svg = d3.select("#box").append("svg")
 
 d3.select("svg")
   .on("mousemove", function() {
-     var zone_num = (event.pageX-margin.left) / (880/9/2);
+     var zone_num = (event.offsetX-margin.left) / (880/9/2);
      if (zone_num < 0) zone_num = -1;
      else if (zone_num >= 18) zone_num = 18;
      else zone_num = Math.floor(zone_num);
