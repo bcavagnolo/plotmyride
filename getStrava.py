@@ -31,6 +31,29 @@ def get_segment_efforts(id, offset=0):
     else:
         return all_efforts + get_segment_efforts(id, offset + 50)
 
+def _fetchGeo(conn):
+    c = conn.cursor()
+    for s in c.execute('SELECT id FROM segments'):
+        if s[0] == 'id':
+            continue
+        print "Fetching geography of segment " + str(s[0])
+        url = STRAVA_URL_V1 + 'stream/segments/' + str(s[0]);
+        f = urllib2.urlopen(url)
+        latlng = json.loads(f.read())['latlng']
+        # take the median point on the ride and use that as the single lat long
+        # to represent the ride.  We could be more sophiticated here
+        ll = latlng[len(latlng)/2]
+        d = conn.cursor()
+        d.execute("UPDATE segments SET lat=?, lon=? WHERE id=?",
+                  (ll[0], ll[1], s[0]))
+
+def fetchGeo():
+    conn = sqlite3.connect(DBFILE)
+    try:
+        _fetchGeo(conn)
+    finally:
+        conn.commit()
+
 def _fetchData(conn, email=None, pw=None, id=None):
 
     if id == None:
@@ -131,7 +154,12 @@ if __name__ == "__main__":
         c.execute('''CREATE TABLE segments (id int, name text, distance float,
                      elevationGain float, averageGrade float,
                      climbCategory int, PRIMARY KEY(id))''')
+        c.execute('''ALTER TABLE segments ADD COLUMN lat float''')
+        c.execute('''ALTER TABLE segments ADD COLUMN lon float''')
         conn.commit()
+
+    if cmd == 'fetchGeo':
+        fetchGeo()
 
     else:
         print 'Error: unknown command ' + cmd
