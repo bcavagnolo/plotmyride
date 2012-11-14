@@ -9,10 +9,15 @@ $(function () {
   });
 
   $("#login").submit(function (e) {
+    pw = $('#pw').val();
 	$('#pw').val("");
     username = $('#uname').val().trim();
     if (!username) {
       $('#message').text("Please enter a username!");
+      return false;
+    }
+    if (!pw) {
+      $('#message').text("Please enter your password!");
       return false;
     }
     if (athletes.indexOf(username) == -1) {
