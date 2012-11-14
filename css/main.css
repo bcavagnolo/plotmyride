@@ -137,6 +137,15 @@ width:250px;
     padding-top: 20px;
 }
 
+#progress{
+	height:600px;
+	width:1000px;
+	position:absolute;
+	margin:10px;
+    padding-top: 20px;
+    left: 200px;
+}
+
 label {
     display: inline-block;
     width: 200px;
