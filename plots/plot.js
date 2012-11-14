@@ -107,8 +107,8 @@ d3.csv("strava.csv", function(data) {
    y.domain(d3.extent(data, function(d) { return d.speed; })).nice();
    chart.domain(d3.extent(data, function(d) { return d.speed; }));
    // set axis variables 
-   var xAxis = d3.svg.axis().scale(x).orient("bottom");
-   var yAxis = d3.svg.axis().scale(y).orient("left");
+   var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(function (d) { return d + " %"});
+   var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(function (d) { return d + " mph"});
 
    // draw axis and labels
    svg.append("g")
@@ -120,7 +120,7 @@ d3.csv("strava.csv", function(data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("avg. Grade");
+      .text("avg. Grade (%)");
    svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
@@ -130,7 +130,7 @@ d3.csv("strava.csv", function(data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("avg. Speed")
+      .text("avg. Speed (mph)")
    // draw dots and bind events for tooltip
    svg.selectAll(".dot")
       .data(data)
@@ -189,7 +189,7 @@ d3.csv("strava.csv", function(data) {
       })
       .style("fill", "#E4E542")
      .on("mouseover", function(d) {
-        tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
+        tooltip.text(d.grade.toFixed(2) + " %, " + d.speed.toFixed(2) + " mph").style("visibility", "visible");
      })
 	  .on("mousemove", function(){
 	     tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX+15)+"px");
@@ -223,6 +223,7 @@ d3.csv("strava.csv", function(data) {
 
    // finish drawing, remove progress meter and scale back the plots
    $(".progress-meter").remove();
+   $(".box text").remove();
    $(".whole").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 })
 .on("progress", function(e) {

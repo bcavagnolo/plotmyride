@@ -48,6 +48,10 @@
    stroke-width: 1.5px;
    fill: #864ec6;
 }
+.box line.median {
+   opacity: 1;
+   stroke-width: 3px;
+}
 .box .center {
    stroke-dasharray: 3 3;
 }
