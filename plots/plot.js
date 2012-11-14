@@ -30,6 +30,15 @@ var svg = d3.select("#box").append("svg")
          .attr("class", "whole")
          .attr("transform", "translate(" + pageWidth / 2 + "," + pageHeight / 2 + ")");
 
+$("#box").css("visibility", "hidden");
+
+var pring = d3.select("#progress").append("svg")
+   .attr("width", width + margin.left + margin.right)
+   .attr("height", height + margin.top + margin.bottom)
+   .append("g")
+   .attr("class", "whole")
+   .attr("transform", "translate(" + pageWidth / 2 + "," + pageHeight / 2 + ")");
+
 d3.select("svg")
   .on("mousemove", function() {
      var zone_num = (event.offsetX-margin.left) / (880/9/2);
@@ -48,7 +57,7 @@ var arc = d3.svg.arc()
          .startAngle(0)
          .innerRadius(innerR)
          .outerRadius(outerR);
-var meter = svg.append("g").attr("class", "progress-meter");
+var meter = pring.append("g").attr("class", "progress-meter");
 meter.append("path")
       .attr("class", "background")
       .attr("d", arc.endAngle(twoPi));
@@ -69,11 +78,12 @@ var tooltip = d3.select("body")
       .text("a simple tooltip");
 
 
-// read CSV and draw the plots
-d3.csv("strava.csv", function(data) {
-   var user_data = [];
-   var box_data = [];
-   var username = getURLParameter('username');
+var user_data = [];
+var box_data = [];
+var username = getURLParameter('username');
+var x, y, data;
+
+function part1() {
    // parse the CSV string to float and select user dots
    data.forEach(function(d) {
       d.grade = parseFloat(d.grade);
@@ -98,10 +108,13 @@ d3.csv("strava.csv", function(data) {
          user_data.push(d);
       }
    });
-   
+   setTimeout(part2, 5);
+}
+
+function part2() {
    // set axis scale variables' ragne
-   var x = d3.scale.linear().range([0, width]);
-   var y = d3.scale.linear().range([height, 0]);
+   x = d3.scale.linear().range([0, width]);
+   y = d3.scale.linear().range([height, 0]);
    // set axis scale variables' domain using extent() (finding min & max) and nice() (extend the scale domain to nice round numbers)
    x.domain(d3.extent(data, function(d) { return d.grade; })).nice();
    y.domain(d3.extent(data, function(d) { return d.speed; })).nice();
@@ -157,7 +170,10 @@ d3.csv("strava.csv", function(data) {
 	     tooltip.style("visibility", "hidden");
 	  });
 */
+   setTimeout(part3, 5);
+}
 
+function part3() {
    // draw box plots
    var vis = svg.selectAll("svg")
       .data(box_data)
@@ -225,6 +241,14 @@ d3.csv("strava.csv", function(data) {
    $(".progress-meter").remove();
    $(".box text").remove();
    $(".whole").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+   $("#progress").remove();
+   $("#box").css("visibility", "visible");
+}
+
+// read CSV and draw the plots
+d3.csv("strava.csv", function(theData) {
+   data = theData;
+   setTimeout(part1, 5);
 })
 .on("progress", function(e) {
    // when progressing, draw the progress meter
