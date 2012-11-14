@@ -12,8 +12,12 @@ a scatter plot of everybody else's average speed and grade.
 Usage
 =====
 
-Load the index.html page and expect the login page to appear.  Login with your
-strava user name, and expect your scatter plot to appear.  Now you can:
+Navigate your browser to:
+
+http://people.ischool.berkeley.edu/~bcavagnolo/plotmyride/html/login.html
+
+...and expect the login page to appear.  Login with your strava user name, and
+expect your scatter plot to appear.  Now you can:
 
 -- Mouse over the scatter plot to reveal your performance on various segments
    of various grade.
@@ -154,3 +158,13 @@ Quirks and known issues
 
 4. Tested on Chrome.  Firefox has some layout problems and doesn't load custom
    font correctly.
+
+5. The strava.csv file can get very large for riders that ride in popular areas
+   or who have completed many rides.  This problem can be addressed in many
+   ways.  One way is that the the crowd data can be based on a sample instead
+   of the full population.  Data streaming and compression are a couple of
+   others.  At this time, none of these techniques are implemented.
+
+6. The progress meter does not advance while the data is rendered.  This is
+   because the rendering blocks the CPU.  The solution is to break up the
+   rendering into smaller chunks.  But this is not implemented yet.
