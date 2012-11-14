@@ -2,7 +2,7 @@ var athletes = [];
 
 $(function () {
   // Fake a dynamic back end by grabbing the whole list of athletes.
-  d3.csv("http://localhost/athletes.csv", function(data) {
+  d3.csv("athletes.csv", function(data) {
     data.forEach(function(d) {
       athletes.push(d.username);
     });
