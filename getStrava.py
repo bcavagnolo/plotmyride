@@ -2,6 +2,7 @@ import urllib2, urllib, sys, getpass, json
 import sqlite3
 import datetime, time
 import math
+import datetime
 
 STRAVA_URL_V1 = 'http://www.strava.com/api/v1/'
 STRAVA_URL_V2 = 'https://www.strava.com/api/v2/'
@@ -191,6 +192,7 @@ if __name__ == "__main__":
         c.execute('''ALTER TABLE segments ADD COLUMN lat float''')
         c.execute('''ALTER TABLE segments ADD COLUMN lon float''')
         c.execute('''ALTER TABLE segments ADD COLUMN station_id''')
+        c.execute('''ALTER TABLE efforts ADD COLUMN temp int''')
         conn.commit()
 
     if cmd == 'fetchGeo':
@@ -219,6 +221,51 @@ if __name__ == "__main__":
             d = conn.cursor()
             d.execute("UPDATE segments SET station_id=? WHERE id=?",
                       (nearest_station[0], seg[0]))
+        conn.commit()
+
+    if cmd == 'addWeather':
+        conn = sqlite3.connect(DBFILE)
+        c = conn.cursor()
+
+        for e in c.execute('SELECT e.id,startDate,usaf,wban FROM ' +
+                           'efforts as e JOIN segments AS seg ON e.segment_id=seg.id ' +
+                           'JOIN stations AS s ON seg.station_id=s.id'):
+
+            (id, startDate, usaf, wban) = e
+            d = conn.cursor()
+            # Now here we have a bit of a mess because sqlite has limited
+            # expression support.
+            q = 'SELECT w.temp, w.maxtemp, w.mintemp, e.startDate, w.date,' + \
+            '(julianday(w.date)-julianday(e.startDate))*(julianday(w.date)-julianday(e.startDate)) as sqerr ' + \
+            'from weather as w JOIN efforts as e on e.id=? where usaf=? and wban=? and ' + \
+            'sqerr=(select min((julianday(w.date)-julianday(e.startDate))*(julianday(w.date)-julianday(e.startDate))) ' + \
+            'from weather as w JOIN efforts as e on e.id=? where usaf=? and wban=? and ' + \
+            "(w.temp !='****' or w.maxtemp != '***' or w.mintemp != '***'))"
+
+            t = d.execute(q, (id, usaf, wban, id, usaf, wban)).fetchone()
+            (temp, maxtemp, mintemp, startDate, date, sqerr) = t
+            startDate = datetime.datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%SZ")
+            date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            delta = startDate-date
+            error = delta.total_seconds()/60/60
+            print error
+            if error > 5 or error < -5:
+                print "Warning: time of weather measurement for effort " + str(id) + \
+                      " is off by",error,"hours"
+                temp = -1000
+            elif temp != "****":
+                temp = int(temp)
+            elif maxtemp != "***" and mintemp != "***":
+                temp = (int(maxtemp) + int(mintemp))/2
+            elif maxtemp != "***":
+                temp = int(maxtemp)
+            elif mintemp != "***":
+                temp = int(mintemp)
+            else:
+                print "Warning: no temperature data for effort " + str(id)
+                temp = -1000
+            d.execute("UPDATE efforts SET temp=? WHERE id=?", (temp, id))
+
         conn.commit()
 
     else:
