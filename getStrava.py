@@ -1,6 +1,7 @@
 import urllib2, urllib, sys, getpass, json
 import sqlite3
 import datetime, time
+import math
 
 STRAVA_URL_V1 = 'http://www.strava.com/api/v1/'
 STRAVA_URL_V2 = 'https://www.strava.com/api/v2/'
@@ -123,6 +124,39 @@ def fetchData(email=None, pw=None, id=None):
     finally:
         conn.commit()
 
+
+# code from:
+# http://www.johndcook.com/python_longitude_latitude.html
+def distance_on_unit_sphere(lat1, long1, lat2, long2):
+
+    # Convert latitude and longitude to 
+    # spherical coordinates in radians.
+    degrees_to_radians = math.pi/180.0
+        
+    # phi = 90 - latitude
+    phi1 = (90.0 - lat1)*degrees_to_radians
+    phi2 = (90.0 - lat2)*degrees_to_radians
+        
+    # theta = longitude
+    theta1 = long1*degrees_to_radians
+    theta2 = long2*degrees_to_radians
+        
+    # Compute spherical distance from spherical coordinates.
+        
+    # For two locations in spherical coordinates 
+    # (1, theta, phi) and (1, theta, phi)
+    # cosine( arc length ) = 
+    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+    # distance = rho * arc length
+
+    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
+           math.cos(phi1)*math.cos(phi2))
+    arc = math.acos( cos )
+
+    # Remember to multiply arc by the radius of the earth 
+    # in your favorite set of units to get length.
+    return arc*6371009
+
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
@@ -156,10 +190,36 @@ if __name__ == "__main__":
                      climbCategory int, PRIMARY KEY(id))''')
         c.execute('''ALTER TABLE segments ADD COLUMN lat float''')
         c.execute('''ALTER TABLE segments ADD COLUMN lon float''')
+        c.execute('''ALTER TABLE segments ADD COLUMN station_id''')
         conn.commit()
 
     if cmd == 'fetchGeo':
         fetchGeo()
+
+    if cmd == 'addWeatherStation':
+        conn = sqlite3.connect(DBFILE)
+        c = conn.cursor()
+
+        stations = []
+        for s in c.execute('SELECT id,lat,lon FROM stations'):
+            stations.append(s)
+
+        # Now we have a shameful O(n^2) distance calculation...
+        for seg in c.execute('SELECT id,lat,lon FROM segments'):
+            print "Finding nearest station for segment",seg[0]
+            min_d = None
+            nearest_station = None
+            for s in stations:
+                d = distance_on_unit_sphere(float(s[1]), float(s[2]),
+                                            float(seg[1]), float(seg[2]))
+                if not min_d or d < min_d:
+                    min_d = d
+                    nearest_station = s
+
+            d = conn.cursor()
+            d.execute("UPDATE segments SET station_id=? WHERE id=?",
+                      (nearest_station[0], seg[0]))
+        conn.commit()
 
     else:
         print 'Error: unknown command ' + cmd
