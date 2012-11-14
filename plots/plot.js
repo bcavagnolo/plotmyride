@@ -110,7 +110,7 @@ function parseStrava() {
    });
 }
 
-function plotCrowd() {
+function preparePlot() {
    // set axis scale variables' ragne
    x = d3.scale.linear().range([0, width]);
    y = d3.scale.linear().range([height, 0]);
@@ -143,6 +143,10 @@ function plotCrowd() {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("avg. Speed (mph)")
+}
+
+function plotCrowd() {
+
    // draw dots and bind events for tooltip
    svg.selectAll(".dot")
       .data(data)
@@ -249,13 +253,35 @@ function done() {
 }
 
 var currentWork = 0;
-var work = [parseStrava, plotCrowd, drawBoxes, plotUser, done];
+var work = [parseStrava, preparePlot, plotCrowd, drawBoxes, plotUser, done];
+
+function incrementProgress() {
+   updateProgress(loadFraction + (1-loadFraction)*currentWork/work.length);
+}
 
 function doWork() {
    if (currentWork >= work.length)
       return;
    work[currentWork++]();
+   incrementProgress();
    setTimeout(doWork, 5);
+}
+
+var loadFraction = 0.0;
+function updateProgress(fraction) {
+   // when progressing, draw the progress meter.  Let 50% of progress be
+   // the load time, and the rest be data processing.
+   if (fraction > 1.0) {
+      fraction = 1.0;
+   }
+   var i = d3.interpolate(progress, fraction);
+   d3.transition().tween("progress", function() {
+      return function(t) {
+         progress = i(t);
+         foreground.attr("d", arc.endAngle(twoPi * progress));
+         meterText.text(formatPercent(progress));
+      };
+   });
 }
 
 // read CSV and draw the plots
@@ -264,13 +290,6 @@ d3.csv("strava.csv", function(theData) {
    setTimeout(doWork, 5);
 })
 .on("progress", function(e) {
-   // when progressing, draw the progress meter
-   var i = d3.interpolate(progress, d3.event.loaded / total);
-   d3.transition().tween("progress", function() {
-      return function(t) {
-         progress = i(t);
-         foreground.attr("d", arc.endAngle(twoPi * progress));
-         meterText.text(formatPercent(progress));
-      };
-   });
+   loadFraction = d3.event.loaded / total * 0.5;
+   updateProgress(loadFraction);
 });
