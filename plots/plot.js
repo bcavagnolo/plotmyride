@@ -83,7 +83,7 @@ var box_data = [];
 var username = getURLParameter('username');
 var x, y, data;
 
-function part1() {
+function parseStrava() {
    // parse the CSV string to float and select user dots
    data.forEach(function(d) {
       d.grade = parseFloat(d.grade);
@@ -108,10 +108,9 @@ function part1() {
          user_data.push(d);
       }
    });
-   setTimeout(part2, 5);
 }
 
-function part2() {
+function plotCrowd() {
    // set axis scale variables' ragne
    x = d3.scale.linear().range([0, width]);
    y = d3.scale.linear().range([height, 0]);
@@ -170,10 +169,9 @@ function part2() {
 	     tooltip.style("visibility", "hidden");
 	  });
 */
-   setTimeout(part3, 5);
 }
 
-function part3() {
+function drawBoxes() {
    // draw box plots
    var vis = svg.selectAll("svg")
       .data(box_data)
@@ -187,6 +185,9 @@ function part3() {
          .attr("height", height)
       .call(chart);
    $("g.box").css("visibility", "hidden");
+}
+
+function plotUser() {
 
    // draw user dots and bind events for tooltip
    svg.selectAll(".userDot")
@@ -236,7 +237,9 @@ function part3() {
         }
       });
     });
+}
 
+function done() {
    // finish drawing, remove progress meter and scale back the plots
    $(".progress-meter").remove();
    $(".box text").remove();
@@ -245,10 +248,20 @@ function part3() {
    $("#box").css("visibility", "visible");
 }
 
+var currentWork = 0;
+var work = [parseStrava, plotCrowd, drawBoxes, plotUser, done];
+
+function doWork() {
+   if (currentWork >= work.length)
+      return;
+   work[currentWork++]();
+   setTimeout(doWork, 5);
+}
+
 // read CSV and draw the plots
 d3.csv("strava.csv", function(theData) {
    data = theData;
-   setTimeout(part1, 5);
+   setTimeout(doWork, 5);
 })
 .on("progress", function(e) {
    // when progressing, draw the progress meter
