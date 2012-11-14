@@ -18,7 +18,7 @@ var boxMargin = {top: 10, right: 50, bottom: 20, left: 50},
     boxWidth = width / 9 / 2,
     boxHeight = 500 - boxMargin.top - boxMargin.bottom;
 var chart = boxChart()
-      .whiskers(iqr(1.5))
+      .whiskers(iqr(10))
       .width(boxWidth)
       .height(boxHeight);
 
@@ -62,10 +62,12 @@ var meterText = meter.append("text")
 // set the tooltip element
 var tooltip = d3.select("body")
       .append("div")
+      .attr("class", "tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
       .style("visibility", "hidden")
       .text("a simple tooltip");
+
 
 // read CSV and draw the plots
 d3.csv("strava.csv", function(data) {
@@ -77,7 +79,6 @@ d3.csv("strava.csv", function(data) {
       d.grade = parseFloat(d.grade);
       d.speed = parseFloat(d.speed)*0.000621371;
       
-      // TODO: should automatically calculate
       var g = d.grade;
       var start_grade = -8, end_grade = 10, diff = 1;
       for (i = 0; i < (end_grade-start_grade)/diff; i++) {
@@ -130,8 +131,6 @@ d3.csv("strava.csv", function(data) {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("avg. Speed")
-   var n_xblocks = $("g.x").children("g").length - 1;
-
    // draw dots and bind events for tooltip
    svg.selectAll(".dot")
       .data(data)
@@ -146,7 +145,8 @@ d3.csv("strava.csv", function(data) {
         m = parseInt(time[1]);
         timemin = h*60 + m
         return timemin;
-      })
+      });
+/*
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
      })
@@ -156,6 +156,7 @@ d3.csv("strava.csv", function(data) {
 	  .on("mouseout", function(d){
 	     tooltip.style("visibility", "hidden");
 	  });
+*/
 
    // draw box plots
    var vis = svg.selectAll("svg")
@@ -186,7 +187,7 @@ d3.csv("strava.csv", function(data) {
         timemin = h*60 + m
         return timemin;
       })
-      .style("fill", "orange")
+      .style("fill", "#E4E542")
      .on("mouseover", function(d) {
         tooltip.text(d.grade + ", " + d.speed).style("visibility", "visible");
      })
